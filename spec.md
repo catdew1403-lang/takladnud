@@ -114,8 +114,14 @@
 
 #### 5. โปรไฟล์ร้าน
 - แบบฟอร์มชื่อร้าน ประเภทสินค้า รายละเอียด และช่องทางติดต่อ
+- เป็นหน้าแยกที่ `/profile` มีรูปโปรไฟล์ ชื่อที่แสดง และอีเมลบัญชี
 - ปุ่มบันทึกและข้อความยืนยันเมื่อบันทึกสำเร็จ
 - คำอธิบายว่าข้อมูลใดจะแสดงต่อสาธารณะบนแผนผัง
+
+#### 5.1 โปรไฟล์ผู้ดูแลระบบ
+- ใช้หน้า `/profile` ร่วมกัน แสดงรูปโปรไฟล์ ชื่อที่แสดง อีเมล และบทบาทผู้ดูแลระบบ
+- ผู้ดูแลระบบแก้ไขชื่อและรูปโปรไฟล์ของตนเองได้ โดยไม่มีช่องแก้ข้อมูลร้านค้า
+- การสมัครสาธารณะยังสร้างได้เฉพาะบัญชีร้านค้า; บัญชีผู้ดูแลระบบจัดเตรียมโดยเจ้าของเว็บไซต์
 
 #### 6. เลือกตลาดและจองแผง
 - รายการตลาดและรอบที่เปิดรับจอง พร้อมวัน เวลา สถานที่ และสถานะรับจอง
@@ -123,6 +129,8 @@
 - แสดงแผนผังและแผงว่างพร้อมรหัส ตำแหน่ง และข้อมูลที่จำเป็นต่อการตัดสินใจ
 - หน้ายืนยันก่อนจอง แสดงตลาด รอบ และแผงที่เลือกอย่างชัดเจน
 - แจ้งผลการจองและสถานะหลังส่งคำขอ พร้อมทางไปดูรายละเอียด
+- หน้ารายละเอียดตลาดมีภาพประกอบ ปฏิทินเลือกวันที่/รอบ และผังจองแบบ 5 แถว A–E แถวละ 12 แผง
+- แผงถูกจองหรือรอบที่ปิดรับจองแล้วต้องแสดงสถานะและปิดการเลือก; ปิดรับจองล่วงหน้าอย่างน้อย 24 ชั่วโมงก่อนเวลาเริ่มรอบ
 
 #### 7. รายละเอียดการจอง
 - ชื่อตลาด วัน/รอบ รหัสแผง ตำแหน่ง และสถานะการจอง
@@ -229,11 +237,52 @@
 
 ดัชนีสำคัญ: `(session_id, booth_id, status)` และ `(shop_id, status)` ต้องตรวจสอบว่ารอบและแผงเป็นของตลาดเดียวกันก่อนบันทึก การจองแผงซ้ำต้องถูกป้องกันด้วยธุรกรรม/ล็อกแถวหรือกลไกควบคุมพร้อมกันในเซิร์ฟเวอร์ เพราะ unique constraint ปกติไม่สามารถห้ามซ้ำเฉพาะแถวที่ยัง active ได้อย่างตรงไปตรงมาเมื่อเก็บประวัติการจองไว้ การยกเลิกเปลี่ยนสถานะเป็น `cancelled` และเก็บแถวเดิมเพื่อประวัติ จากนั้นจึงเปิดให้แผงถูกจองใหม่ได้
 
+### 7. `market_conversations` — ห้องสนทนาร้านค้ากับผู้ดูแลตลาด
+
+| คอลัมน์ | ชนิดข้อมูล | ข้อกำหนด/ความหมาย |
+|---|---|---|
+| `id` | `BIGINT UNSIGNED` | Primary key, auto increment |
+| `market_id` | `BIGINT UNSIGNED` | Foreign key ไป `markets.id`, not null |
+| `shop_user_id` | `BIGINT UNSIGNED` | Foreign key ไป `users.id`, not null |
+| `created_at` | `DATETIME` | เวลาสร้างห้อง |
+| `updated_at` | `DATETIME` | เวลาได้รับข้อความล่าสุด |
+
+กำหนด `UNIQUE(market_id, shop_user_id)` ให้ร้านค้ามีห้องส่วนตัวหนึ่งห้องต่อหนึ่งตลาด ผู้ดูแลระบบตอบข้อความได้ทุกห้องและทุกตลาด
+
+### 8. `market_messages` — ข้อความในห้องสนทนา
+
+| คอลัมน์ | ชนิดข้อมูล | ข้อกำหนด/ความหมาย |
+|---|---|---|
+| `id` | `BIGINT UNSIGNED` | Primary key, auto increment |
+| `conversation_id` | `BIGINT UNSIGNED` | Foreign key ไป `market_conversations.id`, not null |
+| `sender_user_id` | `BIGINT UNSIGNED` | Foreign key ไป `users.id`, not null |
+| `sender_role` | `ENUM('shop','admin')` | บทบาทผู้ส่งขณะส่งข้อความ |
+| `message` | `TEXT` | ข้อความไม่เกิน 2,000 ตัวอักษร |
+| `created_at` | `DATETIME` | เวลาส่งข้อความ |
+
+ผู้ใช้ร้านค้าอ่าน/ตอบได้เฉพาะห้องของตน ส่วนผู้ดูแลระบบอ่าน/ตอบได้ทุกห้อง การส่งข้อความครั้งแรกของร้านค้าจะสร้างห้องให้โดยอัตโนมัติ
+
+### 9. `market_reviews` — คะแนนและรีวิวตลาด
+
+| คอลัมน์ | ชนิดข้อมูล | ข้อกำหนด/ความหมาย |
+|---|---|---|
+| `id` | `BIGINT UNSIGNED` | Primary key, auto increment |
+| `market_id` | `BIGINT UNSIGNED` | Foreign key ไป `markets.id`, not null |
+| `user_id` | `BIGINT UNSIGNED` | Foreign key ไป `users.id`, not null |
+| `rating` | `TINYINT UNSIGNED` | คะแนน 1–5 ดาว |
+| `comment` | `VARCHAR(1000)` | รีวิวข้อความ ไม่บังคับ |
+| `created_at` | `DATETIME` | เวลาสร้างรีวิว |
+| `updated_at` | `DATETIME` | เวลาแก้ไขล่าสุด |
+
+กำหนด `UNIQUE(market_id, user_id)` ให้บัญชีผู้ใช้ที่เข้าสู่ระบบเขียนหรือแก้ไขได้หนึ่งรีวิวต่อตลาด; ค่าเฉลี่ยและจำนวนรีวิวคำนวณจากข้อมูลจริง
+
 ### ความสัมพันธ์หลัก
 
 - `users` 1:1 `shops`
 - `markets` 1:N `market_sessions`
 - `markets` 1:N `booths`
+- `markets` 1:N `market_conversations` และ `market_reviews`
+- `market_conversations` 1:N `market_messages`
 - `market_sessions` 1:N `bookings`
 - `booths` 1:N `bookings` ตลอดช่วงเวลา โดยแผงหนึ่งมีการจองที่ยังใช้งานได้ไม่เกินหนึ่งรายการต่อรอบ
 - `shops` 1:N `bookings`
@@ -276,7 +325,8 @@ API ใช้ JSON ผ่าน same-origin path `/api` และใช้ HTTP 
 | `POST` | `/api/auth/register` | สาธารณะ | สมัครร้าน รับ `{email,password,shopName,category,description?,contactInfo?}`; สร้างบัญชี role `shop` และโปรไฟล์ในธุรกรรม; ตอบ `201` พร้อม `{user,shop}` โดยไม่ส่ง password hash |
 | `POST` | `/api/auth/login` | สาธารณะ | รับ `{email,password}`; ตรวจ hash และสถานะบัญชี; ตอบข้อมูลผู้ใช้และตั้ง session cookie แบบ `HttpOnly`, `Secure` เมื่อใช้ HTTPS, `SameSite=Lax` |
 | `POST` | `/api/auth/logout` | เข้าสู่ระบบ | ทำลาย session และล้าง cookie; ตอบ `204` |
-| `GET` | `/api/auth/me` | เข้าสู่ระบบ | คืน `{user:{id,email,role},shop:{id,name,category,description,contactInfo}}` สำหรับหน้าเว็บหลังโหลด/รีเฟรช |
+| `GET` | `/api/auth/me` | เข้าสู่ระบบ | คืน `{user:{id,email,role,displayName,avatarData},shop:{id,name,category,description,contactInfo}}` สำหรับหน้าเว็บหลังโหลด/รีเฟรช; `shop` เป็น `null` สำหรับแอดมิน |
+| `PATCH` | `/api/profile` | เข้าสู่ระบบ | แก้ไข `displayName` และ `avatarData` ของบัญชีปัจจุบัน; บัญชีร้านค้าส่ง `category`, `description`, `contactInfo` เพื่อบันทึกข้อมูลร้านพร้อมกัน; ไม่สามารถเปลี่ยน role |
 
 ใช้ session ฝั่งเซิร์ฟเวอร์และป้องกัน CSRF สำหรับการเปลี่ยนแปลงข้อมูลเมื่อใช้ cookie authentication; จำกัดความถี่ login/register และไม่เปิดเผยว่าอีเมลใดมีบัญชีอยู่แล้วเกินความจำเป็น
 
@@ -285,7 +335,7 @@ API ใช้ JSON ผ่าน same-origin path `/api` และใช้ HTTP 
 | Method | Path | Auth | หน้าที่ / ข้อมูล |
 |---|---|---|---|
 | `GET` | `/api/markets` | ร้านค้า | รายการตลาดที่เปิดใช้งาน; รองรับ `q`, `date`, `page`, `limit`; คืนรายการย่อพร้อมสถานที่และรอบที่เปิดรับจอง |
-| `GET` | `/api/markets/:marketId/sessions` | ร้านค้า | รายการรอบตลาดที่เปิดใช้งาน; รองรับ `bookingOpen=true` และวันที่; คืน `id,name,startsAt,endsAt,bookingOpen` |
+| `GET` | `/api/markets/:marketId/sessions` | สาธารณะ | รายการรอบตลาดในอนาคตที่เผยแพร่; รองรับ `bookingOpen=true` และ `date=YYYY-MM-DD`; คืน `id,name,startsAt,endsAt,bookingDeadlineAt,bookingOpen`; จองได้เฉพาะเมื่อเวลาเริ่มรอบห่างจากเวลาปัจจุบันอย่างน้อย 24 ชั่วโมง และปิดรับเมื่อถึงกำหนดล่วงหน้า 24 ชั่วโมง |
 | `GET` | `/api/sessions/:sessionId/booths` | ร้านค้า | รายการแผงและตำแหน่ง พร้อม `availability` (`available`/`booked`/`inactive`); แสดงข้อมูลร้านอื่นเท่าที่จำเป็นเท่านั้น |
 | `POST` | `/api/sessions/:sessionId/bookings` | ร้านค้า | จองแผง รับ `{boothId}`; ระบุตัวร้านจาก session ปัจจุบัน ไม่รับ `shopId`; ตอบ `201` พร้อมรายละเอียด booking หรือ `409` เมื่อไม่ว่าง/รอบปิดรับจอง |
 
@@ -326,6 +376,22 @@ API ใช้ JSON ผ่าน same-origin path `/api` และใช้ HTTP 
 | `GET` | `/api/admin/sessions/:sessionId/bookings` | ดูการจองทั้งหมดในรอบ; รองรับ `status,page,limit` |
 | `PATCH` | `/api/admin/bookings/:bookingId` | ปรับสถานะเฉพาะกรณีจำเป็น รับ `{status}`; ตรวจ transition และบันทึกเวลา |
 | `GET` | `/api/admin/sessions/:sessionId/qr` | คืน URL สาธารณะจาก `mapToken` เพื่อสร้าง/แสดง QR Code |
+
+### API สำหรับข้อความและรีวิวตลาด
+
+| Method | Path | Auth | หน้าที่ / ข้อมูล |
+|---|---|---|---|
+| `GET` | `/api/markets/:marketId/qr` | สาธารณะ | สร้าง QR Code แบบ SVG ซึ่งเปิดหน้ารายละเอียดและจองพื้นที่ของตลาดนั้น |
+| `GET` | `/api/markets/:marketId/reviews` | สาธารณะ | ค่าเฉลี่ย จำนวน และรีวิวล่าสุดไม่เกิน 50 รายการ; เมื่อเข้าสู่ระบบส่งรีวิวของบัญชีปัจจุบันกลับมาด้วย |
+| `PUT` | `/api/markets/:marketId/reviews` | บัญชีผู้ใช้ที่เข้าสู่ระบบ | สร้างหรือแก้ไขรีวิวของตน รับ `{rating,comment}`; คะแนน 1–5 และหนึ่งรีวิวต่อบัญชีต่อตลาด |
+| `GET` | `/api/markets/:marketId/conversations` | ร้านค้า/ผู้ดูแล | ร้านค้าเห็นห้องของตนเองเท่านั้น; ผู้ดูแลเห็นกล่องข้อความของทุกบัญชีในตลาด |
+| `GET` | `/api/conversations/:conversationId/messages` | ร้านค้า/ผู้ดูแล | อ่านข้อความในห้อง; ร้านค้าอ่านได้เฉพาะห้องของตน ผู้ดูแลอ่านได้ทุกห้อง |
+| `POST` | `/api/markets/:marketId/messages` | ร้านค้า | เริ่มหรือกลับมาใช้ห้องสนทนาส่วนตัวกับผู้ดูแลตลาด รับ `{message}` |
+| `POST` | `/api/conversations/:conversationId/messages` | ร้านค้า/ผู้ดูแล | ส่งข้อความตอบกลับในห้องที่มีสิทธิ์เข้าถึง รับ `{message}` |
+
+จำกัดข้อความไม่เกิน 2,000 ตัวอักษร และรีวิวไม่เกิน 1,000 ตัวอักษร; แสดงชื่อร้านหรือชื่อที่แสดงแก่ผู้ใช้แทนอีเมล ผู้ดูแลระบบที่มีบัญชีสามารถตอบข้อความในทุกตลาดได้ ส่วนการรีวิวเปิดให้ทุกบัญชีที่เข้าสู่ระบบแล้ว ทั้งร้านค้าและผู้ดูแล หนึ่งรีวิวต่อบัญชีต่อตลาดและแก้ไขภายหลังได้ โดยไม่ได้บังคับว่าต้องมีประวัติการจอง
+
+QR Code ในรายการตลาดต้องอ้าง URL ของ host ปัจจุบันและ deep link ด้วย `?market=<marketId>` เพื่อเปิดตลาดที่ตรงกันโดยตรง; หน้าเว็บเลือกวัน/รอบและจองพื้นที่ต่อได้ตามสิทธิ์บัญชี
 
 ### กติกาการจองและข้อมูลร่วม
 

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" fill="none">
+  <defs>
+    <linearGradient id="sky" x1="140" y1="0" x2="1050" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#DDF1E8"/>
+      <stop offset="1" stop-color="#C8E5E9"/>
+    </linearGradient>
+    <linearGradient id="awning" x1="310" y1="190" x2="888" y2="311" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E9A76F"/>
+      <stop offset="1" stop-color="#D78560"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h1200v520H0z"/>
+  <circle cx="1000" cy="93" r="44" fill="#F4D691"/>
+  <path d="M0 360c162-71 281-76 424-18 159 64 276 28 394-15 143-52 246-50 382 2v191H0V360Z" fill="#B5D9B9"/>
+  <path d="M0 423c165-54 293-44 438 17 166 69 304 28 430-14 129-44 228-40 332 4v90H0v-97Z" fill="#79B392"/>
+  <path d="M90 339h1020v181H90z" fill="#FAF7ED"/>
+  <path d="M131 325h939v25H131z" fill="#547B68"/>
+  <path d="m187 196 408-129 410 129v39H187v-39Z" fill="#F4D39A"/>
+  <path d="m187 196 408-129 410 129H187Z" fill="#D87559"/>
+  <path d="M239 198h712v23H239z" fill="#547B68"/>
+  <path d="M255 220h680v44H255z" fill="url(#awning)"/>
+  <path d="M255 220h78v44h-78zm136 0h78v44h-78zm136 0h78v44h-78zm136 0h78v44h-78zm136 0h78v44h-78zm136 0h78v44h-78z" fill="#F3D69A"/>
+  <path d="M275 264h640v256H275z" fill="#F7F1DE"/>
+  <path d="M310 302h154v218H310z" fill="#8AB6A0"/>
+  <path d="M354 362h66v158h-66z" fill="#D5E9D7"/>
+  <path d="M515 302h177v218H515z" fill="#D3E5D8"/>
+  <path d="M735 302h145v218H735z" fill="#9FC5B0"/>
+  <path d="M770 348h75v172h-75z" fill="#F5D79C"/>
+  <path d="M299 281h593v14H299z" fill="#547B68"/>
+  <path d="M0 493h1200v27H0z" fill="#557C68"/>
+  <path d="M160 345h66v92h-66z" fill="#F2BE71"/>
+  <path d="M149 345h88l-14-26h-60l-14 26Z" fill="#CF7357"/>
+  <path d="M980 345h66v92h-66z" fill="#B5C875"/>
+  <path d="M969 345h88l-14-26h-60l-14 26Z" fill="#E9A76F"/>
+  <circle cx="193" cy="325" r="8" fill="#F3E2B1"/>
+  <circle cx="1013" cy="325" r="8" fill="#F3E2B1"/>
+  <path d="M595 103h8v58h-8z" fill="#547B68"/>
+  <rect x="503" y="115" width="192" height="52" rx="14" fill="#FFFEFA"/>
+  <text x="599" y="150" fill="#286553" font-family="Tahoma, sans-serif" font-size="26" font-weight="700" text-anchor="middle">ตลาดนัดชุมชน</text>
+</svg>
