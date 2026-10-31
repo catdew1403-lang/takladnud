@@ -1,0 +1,33 @@
+﻿<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eaf5f1">
+  <title>ตากหลาดนัด | ตลาดนัดใกล้คุณ</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/index.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="ตากหลาดนัด หน้าหลัก"><span class="brand-mark" aria-hidden="true">ต</span><span><strong>ตากหลาดนัด</strong><small>ตลาดดี ชุมชนสุขใจ</small></span></a>
+    <div class="topbar-actions"><span class="db-status" id="status" role="status" aria-live="polite">กำลังตรวจสอบระบบ...</span><button class="button button-small" id="shop-entry" type="button">สำหรับร้านค้า</button></div>
+  </header>
+  <main id="home">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy"><p class="eyebrow">ตลาดนัดของชุมชน</p><h1 id="hero-title">เดินตลาดสบายใจ<br><span>ค้นพบร้านใกล้คุณ</span></h1><p class="hero-description">เลือกตลาดและวันนัด แล้ววางแผนเดินชมร้านค้าจากแผนผังได้ง่าย ๆ หรือเข้ามาจองพื้นที่สำหรับร้านของคุณ</p><div class="hero-actions"><a class="button" href="#markets">ค้นหาตลาด <span aria-hidden="true">→</span></a><button class="button button-quiet" id="shop-entry-hero" type="button">ฉันเป็นร้านค้า</button></div><div class="hero-note"><span class="note-dot"></span> ดูแผนผังได้โดยไม่ต้องสมัครสมาชิก</div></div>
+      <div class="hero-art" aria-hidden="true"><div class="sun"></div><div class="hill hill-back"></div><div class="hill hill-front"></div><div class="market-sign"><span>ตลาดนัด</span><b>เปิดทุกวันนัด</b></div><div class="leaf leaf-one"></div><div class="leaf leaf-two"></div><div class="leaf leaf-three"></div></div>
+    </section>
+    <section class="section market-section" id="markets" aria-labelledby="market-title">
+      <div class="section-heading"><div><p class="eyebrow">เริ่มต้นได้เลย</p><h2 id="market-title">เลือกตลาดที่อยากไป</h2></div><p>สแกน QR Code ของตลาดก็เปิดแผนผังได้ทันที</p></div>
+      <div class="search-panel"><label for="market-search">ค้นหาตลาด</label><div class="search-row"><input id="market-search" type="search" placeholder="พิมพ์ชื่อตลาดหรือสถานที่" autocomplete="off"><button class="button" id="search-markets" type="button">ค้นหา</button></div></div>
+      <div class="market-results" id="market-results" aria-live="polite"><div class="empty-card"><span class="empty-icon" aria-hidden="true">⌖</span><div><strong>กำลังโหลดรายการตลาด</strong><p>รายการตลาดที่เปิดให้เข้าชมจะแสดงที่นี่</p></div></div></div>
+      <div class="qr-hint"><span aria-hidden="true">▦</span><p><strong>มี QR Code อยู่แล้ว?</strong> สแกนด้วยกล้องมือถือเพื่อเปิดแผนผังของตลาดนั้นโดยตรง</p></div>
+    </section>
+    <section class="shop-banner" id="shop"><div><p class="eyebrow">พื้นที่สำหรับคนทำมาหากิน</p><h2>อยากมีร้านในตลาดนัด?</h2><p>สร้างโปรไฟล์ร้าน เลือกวันนัด และจองแผงว่างได้ในที่เดียว</p></div><button class="button button-light" id="shop-entry-banner" type="button">เข้าสู่ระบบ / สมัครร้านค้า <span aria-hidden="true">→</span></button></section>
+  </main>
+  <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-title"><div class="auth-card"><button class="dialog-close" id="close-auth" type="button" aria-label="ปิด">×</button><p class="eyebrow">พื้นที่สำหรับร้านค้า</p><h2 id="auth-title">เข้าสู่ระบบ</h2><div class="auth-tabs"><button type="button" id="login-tab" class="active">เข้าสู่ระบบ</button><button type="button" id="register-tab">สมัครสมาชิก</button></div><form id="auth-form"><label for="auth-email">อีเมล</label><input id="auth-email" name="email" type="email" autocomplete="email" required><label for="auth-password">รหัสผ่าน</label><input id="auth-password" name="password" type="password" minlength="8" autocomplete="current-password" required><div id="register-fields" hidden><label for="shop-name">ชื่อร้าน</label><input id="shop-name" name="shopName" maxlength="150"><label for="shop-category">ประเภทสินค้า</label><input id="shop-category" name="category" maxlength="100"><label for="shop-contact">ช่องทางติดต่อ (ไม่บังคับ)</label><input id="shop-contact" name="contactInfo" maxlength="255"></div><p class="form-message" id="auth-message" role="alert"></p><button class="button form-submit" type="submit" id="auth-submit">เข้าสู่ระบบ</button></form></div></dialog>
+  <section class="account-panel" id="account-panel" hidden aria-live="polite"><div class="account-heading"><div><p class="eyebrow">บัญชีร้านค้า</p><h2 id="account-title">ยินดีต้อนรับ</h2></div><button class="button button-quiet" id="logout-button" type="button">ออกจากระบบ</button></div><div class="account-grid"><article class="account-card"><h3>ข้อมูลร้าน</h3><form id="profile-form"><label for="profile-name">ชื่อร้าน</label><input id="profile-name" name="name" required maxlength="150"><label for="profile-category">ประเภทสินค้า</label><input id="profile-category" name="category" required maxlength="100"><label for="profile-description">รายละเอียดร้าน</label><textarea id="profile-description" name="description" rows="3" maxlength="5000"></textarea><label for="profile-contact">ช่องทางติดต่อที่เปิดเผยต่อลูกค้า</label><input id="profile-contact" name="contactInfo" maxlength="255"><p class="form-message" id="profile-message" role="status"></p><button class="button" type="submit">บันทึกข้อมูลร้าน</button></form></article><article class="account-card"><h3>ตลาดที่เปิดให้เข้าชม</h3><p>ค้นหาตลาดและดูวันที่จัดได้ที่รายการตลาดหน้าแรก</p><a class="button button-quiet" href="#markets">ค้นหาตลาด</a><div class="account-divider"></div><h3>รายการจอง</h3><p>ระบบจองแผงจะเปิดให้ใช้งานเมื่อจัดเตรียมรอบตลาดและแผงเรียบร้อย</p></article></div></section>
+  <footer><span class="brand-mark" aria-hidden="true">ต</span><span>ตากหลาดนัด</span><span class="footer-tagline">ตลาดดี ชุมชนสุขใจ</span></footer>
+</body>
+</html>
