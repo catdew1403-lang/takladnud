@@ -785,7 +785,7 @@ app.use((error, req, res, next) => {
 });
 
 ensureSchema().then(() => {
-  app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
+  app.listen(3110, () => console.log(`Server running at http://localhost:${port}`));
 }).catch((error) => {
   console.error("Database schema setup failed:", error.message);
   process.exitCode = 1;
