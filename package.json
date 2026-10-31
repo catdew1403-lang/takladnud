@@ -1,1 +1,15 @@
-﻿{"name":"classroom-project","version":"1.0.0","private":true,"description":"Classroom Express and MariaDB project","main":"server.js","scripts":{"start":"node server.js"},"dependencies":{"express":"^4.21.2","mariadb":"^3.4.0","qrcode":"^1.5.4"}}
+{
+  "name": "classroom-project",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Classroom Express and MariaDB project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mariadb": "^3.4.0",
+    "qrcode": "^1.5.4"
+  }
+}

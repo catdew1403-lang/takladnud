@@ -8,7 +8,7 @@ const { promisify } = require("util");
 const scryptAsync = promisify(scrypt);
 
 const app = express();
-const port = Number(process.env.PORT) || 3110;
+const port = 3110;
 const pool = mariadb.createPool({
   host: "10.200.210.117",
   port: 3306,
